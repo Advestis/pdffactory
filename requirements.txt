@@ -1,0 +1,4 @@
+transparentpath
+tablewriter
+matplotlib
+PyPDF2
