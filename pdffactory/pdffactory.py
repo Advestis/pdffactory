@@ -151,8 +151,7 @@ class PdfFactory(object):
 
         PdfFactory.log("Adding a table", "debug")
         table.path_output = self.path_tmp.name
-        table.compile(silenced=PdfFactory.SILENCED)#, clean_tex=True)
-        input(table.path)
+        table.compile(silenced=PdfFactory.SILENCED, clean_tex=True)
         if update:
             # If recreate is specified, recreates the file.
             # If it is the first time that add_something() was called, also

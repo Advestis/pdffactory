@@ -20,5 +20,4 @@ def test_pdffactory():
     pdf.add_figure(plt.gcf())
     pdf.add_table(tb)
     assert outpath.is_file()
-
-test_pdffactory()
+    outpath.rm()
