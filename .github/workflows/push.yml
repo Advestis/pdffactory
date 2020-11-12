@@ -66,5 +66,5 @@ jobs:
         with:
           username: ${{ secrets.docker_login }}
           password: ${{ secrets.docker_passwd }}
-          repository: advestis/pdffactory
+          repository: advestisrepositories/pdffactory
           tag_with_ref: true
