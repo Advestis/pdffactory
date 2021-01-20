@@ -1,5 +1,5 @@
 import tempfile
-from transparentpath import TransparentPath as Path
+from pathlib import Path
 from typing import BinaryIO, Union
 import warnings
 import PyPDF2
@@ -9,7 +9,8 @@ from matplotlib.backends import backend_pdf as pltpdf
 from tablewriter import TableWriter
 
 
-def unlink_if_exists(path: Path) -> None:
+# noinspection PyUnresolvedReferences
+def unlink_if_exists(path: Union[Path, "TransparentPath"]) -> None:
     """Removes the file if it exists.
 
     Else, does nothing.
@@ -63,25 +64,26 @@ class PdfFactory(object):
         """To not print anything (except errors)"""
         cls.SILENCED = silenced
 
+    # noinspection PyUnresolvedReferences
     def __init__(
-        self, path: Union[str, Path],
+        self, path: Union[str, Path, "TransparentPath"],
     ):
         """
 
         Parameters
         ----------
-        path: Union[str, Path] : Were the pdf file will be (or is) stored.
+        path: Union[str, Path, "TransparentPath"] : Were the pdf file will be (or is) stored.
             Initialisation does not touch the file located at path.
         """
 
-        self.path = Path(path)
+        if type(path) == str:
+            path = Path(path)
+        self.path = path
         self.recreated = False
         self.path_tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        
+
         PdfFactory.log(f"created tmp file {self.path_tmp.name}", "debug")
-        PdfFactory.log(
-            f"test existence of tmp file : {Path(self.path_tmp.name).is_file()}", "debug"
-        )
+        PdfFactory.log(f"test existence of tmp file : {Path(self.path_tmp.name).is_file()}", "debug")
 
     def __del__(self):
         PdfFactory.log(f"deleting tmp file {self.path_tmp.name}", "debug")
@@ -150,7 +152,7 @@ class PdfFactory(object):
             raise ValueError(f"Only accepts TableWriter object, not {type(table)}")
 
         PdfFactory.log("Adding a table", "debug")
-        table.path_output = self.path_tmp.name
+        table.path = self.path_tmp.name
         table.compile(silenced=PdfFactory.SILENCED, clean_tex=True)
         if update:
             # If recreate is specified, recreates the file.
@@ -159,15 +161,17 @@ class PdfFactory(object):
             self.update(recreate or not self.recreated)
             self.recreated = True
 
-    # noinspection PyBroadException
-    def get_pdf_pages(self, path: Path, out: PyPDF2.PdfFileWriter) -> Union[BinaryIO, None]:
+    # noinspection PyBroadException,PyUnresolvedReferences
+    def get_pdf_pages(
+        self, path: Union[Path, "TransparentPath", str], out: PyPDF2.PdfFileWriter
+    ) -> Union[BinaryIO, None]:
         """To get existing pages in a given pdf file.
 
         Will raise an error if the file exists by failed to read.
 
         Parameters
         ----------
-        path: Union[Path, str] : The path to read pages from
+        path: Union[Path, TransparentPath, str] : The path to read pages from
         out: PyPDF2.PdfFileWriter :
          The object in which to store those pages
 
@@ -178,19 +182,10 @@ class PdfFactory(object):
             file were found.
         """
 
-        #     s = path
-        #     try:
-        #         s = s.name
-        #     except AttributeError:
-        #         pass
+        if type(path) == str:
+            path = Path(path)
         PdfFactory.log(f"  getting pdf pages from {path}", "debug")
         if path.is_file():
-
-            #     s = path
-            #     try:
-            #         s = s.name
-            #     except AttributeError:
-            #         pass
             PdfFactory.log(f"    found the file {path}", "debug")
             try:
                 f = open(path, "rb")
@@ -202,11 +197,6 @@ class PdfFactory(object):
                 Path(self.path_tmp.name).unlink()
                 raise e
 
-            # s = path
-            # try:
-            #     s = s.name
-            # except AttributeError:
-            #     pass
         PdfFactory.log(f"    did not find the file {path}", "debug")
         return None
 
@@ -226,14 +216,18 @@ class PdfFactory(object):
         f_old = None
         if not recreate:
 
-            PdfFactory. log(f"fetching old file {self.path}", "debug")
+            PdfFactory.log(f"fetching old file {self.path}", "debug")
             f_old = self.get_pdf_pages(self.path, output)
 
         PdfFactory.log(f"fetching tmp file {self.path_tmp.name}", "debug")
         f_new = self.get_pdf_pages(Path(self.path_tmp.name, fs="local"), output)
 
-        with open(self.path.append("_"), "wb") as outputStream:
-            output.write(outputStream)
+        if "append" in dir(self.path):
+            with open(self.path.append("_"), "wb") as outputStream:
+                output.write(outputStream)
+        else:
+            with open(str(self.path) + "_", "wb") as outputStream:
+                output.write(outputStream)
 
         if f_old is not None:
             f_old.close()
@@ -244,7 +238,10 @@ class PdfFactory(object):
 
         PdfFactory.log(f"deleting tmp file {self.path_tmp.name}", "debug")
         unlink_if_exists(Path(self.path_tmp.name, fs="local"))
-        self.path.append("_").mv(self.path)
+        if "append" in dir(self.path):
+            self.path.append("_").mv(self.path)
+        else:
+            Path(str(self.path) + "_").rename(self.path)
 
     @classmethod
     def log(cls, message, type_):

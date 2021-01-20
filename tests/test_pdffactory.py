@@ -1,16 +1,22 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import pytest
 from tablewriter import TableWriter
 from pdffactory import PdfFactory
-from transparentpath import TransparentPath as Path
+from pathlib import Path
+from transparentpath import TransparentPath
 
 
-def test_pdffactory():
+@pytest.mark.parametrize(
+    "cls", [Path, TransparentPath, str]
+)
+def test_pdffactory(cls):
     PdfFactory.SILENCED = False
 
     outpath = Path("tests/data/out.pdf")
     if outpath.is_file():
-        outpath.rm()
+        outpath.unlink()
+    outpath = cls(str(outpath))
 
     pdf = PdfFactory(outpath)
     pdf.will_recreate(True)
@@ -19,5 +25,7 @@ def test_pdffactory():
     tb = TableWriter(data=df)
     pdf.add_figure(plt.gcf())
     pdf.add_table(tb)
-    assert outpath.is_file()
-    outpath.rm()
+    if cls == str:
+        cls = Path
+    assert cls(outpath).is_file()
+    cls(outpath).unlink()
