@@ -4,9 +4,9 @@ A class to update and/or create a pdf object, and add pages to it. For now only 
 tablewriter.TableWriter objects can be added.
 
 Can be opened at the beginning of a long code to add pages from different functions. Will create a file in the 
-tmp directory were pages are added, and will modify the true file when the update() method is called. update() is 
+tmp directory where pages are added, and will modify the true file when the update() method is called. update() is 
 called each time and add_*() method is called. This can be prevented by passing the argument update=False to 
-those method. In that case, the user will have to call the update() method later. This can save computation time 
+those methods. In that case, the user will have to call the update() method later. This can save computation time 
 if a lot of pages are added during the execution of the code. 
 
 The output file is recreated by default when update() is called for the first time. This can be switched off by 
