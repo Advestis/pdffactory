@@ -5,7 +5,7 @@ on:
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-name: master
+name: pytests
 jobs:
   pytest:
     runs-on: ubuntu-latest
