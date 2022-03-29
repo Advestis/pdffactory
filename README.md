@@ -1,3 +1,27 @@
+[![doc](https://img.shields.io/badge/-Documentation-blue)](https://advestis.github.io/pdffactory)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+#### Status
+![Pytests](https://github.com/Advestis/pdffactory/actions/workflows/pull-request.yml/badge.svg)
+![push](https://github.com/Advestis/pdffactory/actions/workflows/push.yml/badge.svg)
+
+![maintained](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
+![issues](https://img.shields.io/github/issues/Advestis/pdffactory.svg)
+![pr](https://img.shields.io/github/issues-pr/Advestis/pdffactory.svg)
+
+
+#### Compatibilities
+![ubuntu](https://img.shields.io/badge/Ubuntu-supported--tested-success)
+![unix](https://img.shields.io/badge/Other%20Unix-supported--untested-yellow)
+
+![python](https://img.shields.io/pypi/pyversions/pdffactory)
+
+
+##### Contact
+[![linkedin](https://img.shields.io/badge/LinkedIn-Advestis-blue)](https://www.linkedin.com/company/advestis/)
+[![website](https://img.shields.io/badge/website-Advestis.com-blue)](https://www.advestis.com/)
+[![mail](https://img.shields.io/badge/mail-maintainers-blue)](mailto:pythondev@advestis.com)
+
 # PdfFactory
 
 A class to update and/or create a pdf object, and add pages to it. For now only matplotlib.figure and 
