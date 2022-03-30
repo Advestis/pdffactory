@@ -4,11 +4,10 @@ import pytest
 from tablewriter import TableWriter
 from pdffactory import PdfFactory
 from pathlib import Path
-from transparentpath import TransparentPath
 
 
 @pytest.mark.parametrize(
-    "cls", [Path, TransparentPath, str]
+    "cls", [Path, str]
 )
 def test_pdffactory(cls):
     PdfFactory.SILENCED = False
